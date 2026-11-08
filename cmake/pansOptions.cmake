@@ -22,7 +22,7 @@ target_link_options(pans_options INTERFACE
     >
 )
 
-target_compile_options(pans_options INTERFACE
+target_compile_definitions(pans_options INTERFACE
     $<$<CONFIG:Debug>:PANS_DEBUG> # windows 下，DEBUG被占用
 )
 
