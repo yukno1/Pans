@@ -1,0 +1,241 @@
+# ==============================================================================
+#  .clang-format — 现代 C++ 通用风格
+#  特点：4 空格缩进 / 120 列 / 指针靠左 / 禁止单行 if / 自动补全大括号
+#  基准：clang-format 18+
+#  放置位置：项目根目录（会向上级目录递归查找）
+# ==============================================================================
+---
+Language:        Cpp
+BasedOnStyle:    Google      # 未显式声明的项继承 Google，避免升级版本时行为漂移
+Standard:        Latest      # 按最新 C++ 标准解析（概念、模块、三路比较等）
+DisableFormat:   false
+
+# ------------------------------------------------------------------------------
+# 1. 缩进与列宽
+# ------------------------------------------------------------------------------
+ColumnLimit:                      120     # 单行上限；0 表示不限制
+IndentWidth:                      4
+TabWidth:                         4
+UseTab:                           Never   # 一律空格，杜绝跨编辑器错位
+ContinuationIndentWidth:          4       # 续行缩进
+ConstructorInitializerIndentWidth: 4      # 构造函数初始化列表缩进
+AccessModifierOffset:             -4      # public/private 相对类体反缩进 4
+IndentAccessModifiers:            false   # 与上一项配合使用
+IndentCaseLabels:                 true    # case 相对 switch 缩进
+IndentCaseBlocks:                 false
+IndentGotoLabels:                 true
+IndentPPDirectives:               None    # 预处理指令不缩进（可选 BeforeHash）
+PPIndentWidth:                    -1      # -1 表示沿用 IndentWidth
+IndentExternBlock:                NoIndent # extern "C" { } 内部不额外缩进
+IndentWrappedFunctionNames:       false
+NamespaceIndentation:             None    # namespace 内不缩进（大型项目必备）
+CompactNamespaces:                false
+LambdaBodyIndentation:            Signature
+
+# ------------------------------------------------------------------------------
+# 2. 大括号风格（K&R / Attach，用 Custom 精确控制每一处）
+# ------------------------------------------------------------------------------
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel:      false
+  AfterClass:          false
+  AfterControlStatement: Never
+  AfterEnum:           false
+  AfterFunction:     false
+  AfterNamespace:    false
+  AfterStruct:       false
+  AfterUnion:        false
+  AfterExternBlock:  false
+  BeforeCatch:       false
+  BeforeElse:        false
+  BeforeLambdaBody:  false
+  BeforeWhile:       false     # do-while 的 while 不换行
+  IndentBraces:      false
+  SplitEmptyFunction:  false   # 空函数写成 {}
+  SplitEmptyRecord:    false
+  SplitEmptyNamespace: false
+Cpp11BracedListStyle: true     # 初始化列表按代码块而非结构体字面量处理
+InsertBraces:         true     # v15+：自动给单语句 if/for/while 补 {}（防 goto fail）
+RemoveBracesLLVM:     false
+SpaceInEmptyBlock:    false    # {} 而非 { }
+
+# ------------------------------------------------------------------------------
+# 3. 短语句压缩：全面禁止（可读性 & Git diff 友好）
+# ------------------------------------------------------------------------------
+AllowShortBlocksOnASingleLine:        Never
+AllowShortIfStatementsOnASingleLine:  Never
+AllowShortLoopsOnASingleLine:         false
+AllowShortCaseLabelsOnASingleLine:    false
+AllowShortEnumsOnASingleLine:         false
+AllowShortFunctionsOnASingleLine:     Empty   # 只有空函数允许一行
+AllowShortLambdasOnASingleLine:       All     # 短 lambda 允许一行，如 []{ return 1; }
+
+# ------------------------------------------------------------------------------
+# 4. 换行与参数打包策略
+# ------------------------------------------------------------------------------
+AlwaysBreakAfterReturnType:            None
+AlwaysBreakBeforeMultilineStrings:     false
+AlwaysBreakTemplateDeclarations:       Yes    # template<...> 后强制换行
+BreakBeforeBinaryOperators:            None   # 运算符放行尾
+BreakBeforeTernaryOperators:           true   # ? : 放行首，三元表达式更清晰
+BreakBeforeConceptDeclarations:        Always
+BreakConstructorInitializers:          BeforeColon
+BreakInheritanceList:                  BeforeColon
+PackConstructorInitializers:           NextLine
+BreakStringLiterals:                   true
+BinPackArguments:                      false  # 装不下时「一个实参一行」，而非塞满
+BinPackParameters:                     false  # 同上，形参亦然
+AllowAllArgumentsOnNextLine:           true   # 允许整体挪到下一行
+AllowAllParametersOfDeclarationOnNextLine: true
+ExperimentalAutoDetectBinPacking:      false
+
+# ------------------------------------------------------------------------------
+# 5. 对齐
+# ------------------------------------------------------------------------------
+AlignAfterOpenBracket: Align       # 与左括号后第一个参数对齐
+AlignOperands:         Align       # 多行表达式的操作数对齐
+AlignEscapedNewlines:  Left        # 宏续行反斜杠左对齐（不顶到 120 列）
+AlignTrailingComments: true        # 行尾注释对齐
+AlignArrayOfStructures: None
+AlignConsecutiveAssignments:       # 连续赋值不对齐（减少无意义 diff）
+  Enabled:          false
+  AcrossEmptyLines: false
+  AcrossComments:   false
+  AlignCompound:    false
+  PadOperators:     true
+AlignConsecutiveDeclarations:
+  Enabled:          false
+  AcrossEmptyLines: false
+  AcrossComments:   false
+AlignConsecutiveMacros:
+  Enabled:          false
+  AcrossEmptyLines: false
+  AcrossComments:   false
+AlignConsecutiveBitFields:
+  Enabled:          false
+  AcrossEmptyLines: false
+  AcrossComments:   false
+
+# ------------------------------------------------------------------------------
+# 6. 空格
+# ------------------------------------------------------------------------------
+SpaceAfterCStyleCast:              false   # (int)x 而非 (int) x
+SpaceAfterLogicalNot:              false   # !ok
+SpaceAfterTemplateKeyword:         true    # template <typename T>
+SpaceAroundPointerQualifiers:      Default
+SpaceBeforeAssignmentOperators:    true
+SpaceBeforeCaseColon:              false
+SpaceBeforeCpp11BracedList:        false   # Foo{1, 2}
+SpaceBeforeCtorInitializerColon:   true    # Foo() : a_(1)
+SpaceBeforeInheritanceColon:       true    # class A : public B
+SpaceBeforeParens:                 ControlStatements  # if ( / for ( 但 func(
+SpaceBeforeRangeBasedForLoopColon: true    # for (auto& x : v)
+SpaceBeforeSquareBrackets:         false
+SpaceInEmptyParentheses:           false
+SpacesBeforeTrailingComments:      2
+SpacesInAngles:                    Never   # vector<int> 而非 vector< int >
+SpacesInCStyleCastParentheses:     false
+SpacesInConditionalStatement:      false
+SpacesInContainerLiterals:         false
+SpacesInParentheses:               false
+SpacesInSquareBrackets:            false
+SpacesInLineCommentPrefix:
+  Minimum: 1                               # // 后至少一个空格
+  Maximum: -1                              # -1 = 不限制
+BitFieldColonSpacing: Both                 # unsigned bf : 2;
+
+# ------------------------------------------------------------------------------
+# 7. 指针 / 引用 / 限定符
+# ------------------------------------------------------------------------------
+DerivePointerAlignment: false      # 必须关掉！否则 PointerAlignment 会被自动推断覆盖
+PointerAlignment:       Left       # int* p;
+ReferenceAlignment:     Pointer    # int& r; 跟随指针设置
+QualifierAlignment:     Leave      # 不擅自重排 const/volatile（可选 Right/Left）
+
+# ------------------------------------------------------------------------------
+# 8. 空行与代码块分隔
+# ------------------------------------------------------------------------------
+MaxEmptyLinesToKeep:              1
+KeepEmptyLinesAtTheStartOfBlocks: false   # 块首不留空行
+EmptyLineAfterAccessModifier:     Never
+EmptyLineBeforeAccessModifier:    LogicalBlock
+SeparateDefinitionBlocks:         Leave   # 想强制函数间空行可改 Always
+InsertNewlineAtEOF:               true    # v16+：文件末尾补换行（POSIX 友好）
+LineEnding:                       LF      # v16+：统一 LF，跨平台协作关键
+FixNamespaceComments:             true    # 自动补 }  // namespace foo
+# ShortNamespaceComments:           true
+
+# ------------------------------------------------------------------------------
+# 9. 头文件排序（消除 include 引发的合并冲突）
+#    分组顺序：本文件对应头文件 > C 系统头 > C 标准头 > 三方库 > C++ 标准库 > 项目头
+# ------------------------------------------------------------------------------
+SortIncludes:         CaseSensitive
+SortUsingDeclarations: true
+IncludeBlocks:        Regroup      # 重新分组并组间空行
+IncludeIsMainRegex:   '([-_](test|unittest))?$'   # foo_test.cpp 视 foo.h 为主头文件
+IncludeCategories:
+  - Regex:    '^<(sys|net|netinet|arpa|linux|asm)/'   # 操作系统头
+    Priority: 2
+  - Regex:    '^<.*\.h>'                              # C 标准库 <stdio.h>
+    Priority: 3
+  - Regex:    '^<(boost|gtest|gmock|absl|fmt|spdlog|Eigen|opencv2)/'
+    Priority: 4                                       # 第三方库
+  - Regex:    '^<[^.]*>$'                             # C++ 标准库 <vector>
+    Priority: 5
+  - Regex:    '^"(third_party|external|3rd)/'
+    Priority: 6
+  - Regex:    '.*'                                    # 本项目头文件
+    Priority: 7
+
+# ------------------------------------------------------------------------------
+# 10. 注释
+# ------------------------------------------------------------------------------
+ReflowComments: true               # 重排超长注释；中文注释多的项目可考虑设 false
+CommentPragmas: '^ IWYU pragma:'   # 保护 IWYU 指令不被换行破坏
+
+# ------------------------------------------------------------------------------
+# 11. 宏：告诉格式化器哪些标识符是「语句/循环/属性」，避免排版错乱
+# ------------------------------------------------------------------------------
+MacroBlockBegin: ''
+MacroBlockEnd:   ''
+ForEachMacros:
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+AttributeMacros:
+  - __capability
+  - __unused
+TypenameMacros: []
+WhitespaceSensitiveMacros:         # 这些宏内部空格敏感，禁止改动
+  - STRINGIZE
+  - PP_STRINGIZE
+  - BOOST_PP_STRINGIZE
+
+# ------------------------------------------------------------------------------
+# 12. 惩罚权重（决定「在哪断行」的代价，一般无需改动）
+# ------------------------------------------------------------------------------
+PenaltyBreakAssignment:          2
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment:             300
+PenaltyBreakFirstLessLess:       120
+PenaltyBreakString:              1000
+PenaltyBreakTemplateDeclaration: 10
+PenaltyExcessCharacter:          1000000
+PenaltyReturnTypeOnItsOwnLine:   60
+PenaltyIndentedWhitespace:       0
+
+# ------------------------------------------------------------------------------
+# 13. 原始字符串内部的语言（用 protobuf / 嵌入 SQL 时很有用，可整段删除）
+# ------------------------------------------------------------------------------
+RawStringFormats:
+  - Language:        TextProto
+    Delimiters:      ['pb', 'proto']
+    EnclosingFunctions: ['PARSE_TEXT_PROTO', 'ParseTextProtoOrDie']
+    BasedOnStyle:    Google
+  - Language:        Cpp
+    Delimiters:      ['cc', 'cpp']
+    CanonicalDelimiter: 'cpp'
+    BasedOnStyle:    Google
