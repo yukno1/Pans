@@ -15,7 +15,7 @@
 #include <thread>
 #include <vector>
 
-/*
+/* 运行结果
 operations: 100000, average of 7 runs
 
 threads: 1
@@ -57,7 +57,8 @@ std::atomic<u64> g_atomicCounter{0};
 std::mutex g_mutex;
 std::shared_mutex g_sharedMutex;  // 读写锁
 
-u64 OperationsForThread(std::size_t thread_index, std::size_t thread_count) {
+u64 OperationsForThread(std::size_t thread_index, std::size_t thread_count)
+{
     const u64 base = g_target / thread_count;
     const u64 remainder = g_target % thread_count;
     return base + (thread_index < remainder ? 1 : 0);
@@ -65,7 +66,8 @@ u64 OperationsForThread(std::size_t thread_index, std::size_t thread_count) {
 
 // 跑多线程：将传递进来的模板函数用多个线程跑
 template <typename Operation>
-std::chrono::nanoseconds BenchmarkThreads(std::size_t thread_count, Operation&& operation) {
+std::chrono::nanoseconds BenchmarkThreads(std::size_t thread_count, Operation&& operation)
+{
     // std::latch 是 c++20 加入的一次性线程同步计数器
     std::latch ready(static_cast<std::ptrdiff_t>(thread_count));
     std::latch start_gate(1);
@@ -96,7 +98,8 @@ std::chrono::nanoseconds BenchmarkThreads(std::size_t thread_count, Operation&& 
     return std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
 }
 
-std::chrono::nanoseconds BenchmarkMutex(std::size_t thread_count) {
+std::chrono::nanoseconds BenchmarkMutex(std::size_t thread_count)
+{
     g_Counter = 0;
     const auto elapsed = BenchmarkThreads(thread_count, [](std::size_t, u64 operations) {
         for (u64 index = 0; index < operations; ++index) {
@@ -107,7 +110,8 @@ std::chrono::nanoseconds BenchmarkMutex(std::size_t thread_count) {
     return elapsed;
 }
 
-std::chrono::nanoseconds BenchmarkSharedMutex(std::size_t thread_count) {
+std::chrono::nanoseconds BenchmarkSharedMutex(std::size_t thread_count)
+{
     g_Counter = 0;
     const auto elapsed = BenchmarkThreads(thread_count, [](std::size_t, u64 operations) {
         for (u64 index = 0; index < operations; ++index) {
@@ -118,7 +122,8 @@ std::chrono::nanoseconds BenchmarkSharedMutex(std::size_t thread_count) {
     return elapsed;
 }
 
-std::chrono::nanoseconds BenchmarkAtomic(std::size_t thread_count) {
+std::chrono::nanoseconds BenchmarkAtomic(std::size_t thread_count)
+{
     g_atomicCounter.store(0, std::memory_order_relaxed);
     const auto elapsed = BenchmarkThreads(thread_count, [](std::size_t, u64 operations) {
         for (u64 index = 0; index < operations; ++index) {
@@ -128,7 +133,8 @@ std::chrono::nanoseconds BenchmarkAtomic(std::size_t thread_count) {
     return elapsed;
 }
 
-std::chrono::nanoseconds BenchmarkAtomicCas(std::size_t thread_count) {
+std::chrono::nanoseconds BenchmarkAtomicCas(std::size_t thread_count)
+{
     g_atomicCounter.store(0, std::memory_order_relaxed);
     const auto elapsed = BenchmarkThreads(thread_count, [](std::size_t, u64 operations) {
         for (u64 index = 0; index < operations; ++index) {
@@ -143,7 +149,8 @@ std::chrono::nanoseconds BenchmarkAtomicCas(std::size_t thread_count) {
 
 // 运行传递进来的函数
 template <typename Benchmark>  // 万能引用
-double Run(Benchmark&& benchmark) {
+double Run(Benchmark&& benchmark)
+{
     long double total_nanoseconds = 0.0L;
     for (int run = 0; run < RUNS; ++run) {
         total_nanoseconds += static_cast<long double>(benchmark().count());
@@ -151,13 +158,15 @@ double Run(Benchmark&& benchmark) {
     return static_cast<double>(total_nanoseconds / RUNS);
 }
 
-void PrintResult(std::string_view name, double total_nanoseconds) {
+void PrintResult(std::string_view name, double total_nanoseconds)
+{
     const double nanoseconds_per_operation = total_nanoseconds / static_cast<double>(g_target);
     std::cout << std::left << std::setw(14) << name << std::right << total_nanoseconds << " ns \ttotal, "
               << nanoseconds_per_operation << " ns/op\n";
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     if (argc != 2) {
         std::cerr << "Usage: ./test_lock count\n";
         return -1;
