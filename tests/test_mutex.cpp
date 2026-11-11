@@ -1,5 +1,6 @@
 #include <pans/macros.h>
 #include <pans/mutex.h>
+#include <pans/types.h>
 
 #include <atomic>
 #include <chrono>
