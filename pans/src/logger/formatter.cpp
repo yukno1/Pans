@@ -97,6 +97,10 @@ public:
     }
 };
 
+/*时间戳
+精确到秒，比如：2026-8-19 23:40:49。
+如果还在同一秒，就可以复用上次的转换结果。
+ */
 class DateTimeFormatItem final : public Formatter::FormatItem {
 public:
     explicit DateTimeFormatItem(std::string_view format) : m_format(format.empty() ? DEFAULT_DATE_FORMAT : format) {}
@@ -153,6 +157,7 @@ public:
         // 秒内微秒必须补齐成固定六位，否则 12:00:00.1234 这样的时间戳无法解析，也无法按字典序排序。
         std::array<char, MICROSECONDS_WIDTH> digits{};
         auto remaining = static_cast<u32>(microseconds);
+        // 转字符
         for (std::size_t index = digits.size(); index-- > 0;) {
             digits[index] = static_cast<char>('0' + remaining % 10);
             remaining /= 10;
